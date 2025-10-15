@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CloudDrive - Secure File Storage</title>
+    <title>CloudDrive - Secure Cloud Storage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,26 +11,41 @@
         /* Advanced Animations */
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            25% { transform: translateY(-10px) rotate(2deg); }
-            75% { transform: translateY(-5px) rotate(-2deg); }
+            25% { transform: translateY(-15px) rotate(3deg); }
+            75% { transform: translateY(-8px) rotate(-3deg); }
         }
 
         @keyframes glow {
             0%, 100% { 
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
-                          0 0 40px rgba(147, 51, 234, 0.2),
-                          0 0 60px rgba(79, 70, 229, 0.1);
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.4),
+                          0 0 50px rgba(147, 51, 234, 0.3),
+                          0 0 75px rgba(79, 70, 229, 0.2);
             }
             50% { 
-                box-shadow: 0 0 30px rgba(59, 130, 246, 0.6),
-                          0 0 60px rgba(147, 51, 234, 0.4),
-                          0 0 90px rgba(79, 70, 229, 0.2);
+                box-shadow: 0 0 35px rgba(59, 130, 246, 0.8),
+                          0 0 70px rgba(147, 51, 234, 0.6),
+                          0 0 105px rgba(79, 70, 229, 0.4);
             }
         }
 
+        @keyframes particleMove {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
         @keyframes shimmer {
-            0% { background-position: -200px 0; }
-            100% { background-position: 200px 0; }
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
         }
 
         @keyframes bounceIn {
@@ -46,104 +61,181 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* Custom Styles */
         .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .neon-glow {
-            animation: glow 3s ease-in-out infinite;
+            animation: glow 4s ease-in-out infinite;
         }
 
         .float-animation {
-            animation: float 6s ease-in-out infinite;
+            animation: float 8s ease-in-out infinite;
         }
 
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            background-size: 200px 100%;
-            animation: shimmer 2s infinite;
+        .shimmer-effect {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 3s infinite linear;
         }
 
         .bounce-in {
-            animation: bounceIn 0.8s ease-out;
+            animation: bounceIn 1s ease-out;
         }
 
         .slide-in-up {
-            animation: slideInUp 0.6s ease-out;
+            animation: slideInUp 0.8s ease-out;
         }
 
         .pulse-hover:hover {
-            animation: pulse 0.5s ease-in-out;
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        .rotate-continuous {
+            animation: rotate 20s linear infinite;
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #fff;
+            white-space: nowrap;
+            animation: typewriter 3s steps(40, end), blink 0.8s infinite;
         }
 
         .file-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
         }
 
         .file-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-12px) scale(1.03) rotateX(5deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
-        .progress-bar {
-            background: linear-gradient(90deg, #4f46e5, #7c3aed, #ec4899);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite linear;
+        .progress-bar-animated {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #ec4899, #4f46e5);
+            background-size: 400% 100%;
+            animation: shimmer 3s infinite linear;
         }
 
         .upload-area.drag-over {
             border-color: #4f46e5;
-            background: linear-gradient(45deg, #eef2ff, #faf5ff);
-            animation: pulse 1s infinite;
+            background: linear-gradient(135deg, #eef2ff, #faf5ff, #f0f9ff);
+            animation: pulse 1.5s infinite;
         }
 
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: particleMove 8s linear infinite;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            transform: scale(1.2);
+            color: #4f46e5;
+        }
+
+        .storage-warning {
+            animation: pulse 2s infinite;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4f46e5, #7c3aed);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #6366f1, #8b5cf6);
+        }
+
+        /* Loading dots */
+        .loading-dots {
+            display: inline-flex;
+        }
         .loading-dots span {
             animation: bounce 1.4s infinite ease-in-out both;
         }
-
         .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
         .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-
         @keyframes bounce {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1.0); }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen">
-    <!-- Animated Background -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-32 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
-        <div class="absolute -bottom-40 -left-32 w-80 h-80 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 2s"></div>
-        <div class="absolute top-40 left-1/2 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 4s"></div>
-    </div>
+<body class="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 min-h-screen overflow-x-hidden">
+    <!-- Animated Background Particles -->
+    <div id="particlesContainer" class="fixed inset-0 pointer-events-none"></div>
 
     <!-- Boot Screen -->
-    <div id="bootScreen" class="fixed inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 z-50 flex items-center justify-center">
-        <div class="text-center text-white">
-            <div class="loader-animation mb-8">
-                <div class="flex justify-center space-x-3">
-                    <div class="w-4 h-4 bg-white rounded-full animate-bounce"></div>
-                    <div class="w-4 h-4 bg-white rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                    <div class="w-4 h-4 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+    <div id="bootScreen" class="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 z-50 flex items-center justify-center">
+        <div class="text-center text-white relative">
+            <!-- Animated Logo -->
+            <div class="relative mb-12">
+                <div class="w-32 h-32 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl mx-auto flex items-center justify-center neon-glow rotate-continuous">
+                    <i class="fas fa-cloud text-white text-5xl"></i>
+                </div>
+                <div class="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl blur-xl opacity-50"></div>
+            </div>
+            
+            <h1 class="text-6xl font-bold mb-6 typewriter">CloudDrive</h1>
+            <p class="text-2xl opacity-90 mb-8 slide-in-up">Secure Cloud Storage Platform</p>
+            
+            <!-- Loading Animation -->
+            <div class="flex justify-center space-x-4 mb-12">
+                <div class="w-4 h-4 bg-white rounded-full animate-bounce float-animation" style="animation-delay: 0s"></div>
+                <div class="w-4 h-4 bg-white rounded-full animate-bounce float-animation" style="animation-delay: 0.2s"></div>
+                <div class="w-4 h-4 bg-white rounded-full animate-bounce float-animation" style="animation-delay: 0.4s"></div>
+            </div>
+
+            <!-- System Info -->
+            <div class="grid grid-cols-3 gap-6 max-w-2xl mx-auto mb-12">
+                <div class="text-center bounce-in" style="animation-delay: 1s">
+                    <div class="text-3xl font-bold text-blue-300">15GB</div>
+                    <div class="text-blue-200">Storage</div>
+                </div>
+                <div class="text-center bounce-in" style="animation-delay: 1.5s">
+                    <div class="text-3xl font-bold text-purple-300">1GB</div>
+                    <div class="text-purple-200">Per File</div>
+                </div>
+                <div class="text-center bounce-in" style="animation-delay: 2s">
+                    <div class="text-3xl font-bold text-pink-300">100%</div>
+                    <div class="text-pink-200">Secure</div>
                 </div>
             </div>
-            <h1 class="text-5xl font-bold mb-4 neon-glow">CloudDrive</h1>
-            <p class="text-xl opacity-90 mb-2">Secure Cloud Storage</p>
-            <div class="loading-dots text-white text-lg">
-                <span>.</span>
-                <span>.</span>
-                <span>.</span>
-            </div>
-            <button id="skipBoot" class="mt-8 px-6 py-3 glass-effect rounded-full text-white hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hidden">
-                Skip Animation
+
+            <button id="skipBoot" class="mt-8 px-8 py-4 glass-effect rounded-2xl text-white hover:bg-white/20 transition-all duration-500 transform hover:scale-110 hover:rotate-3 hidden">
+                <i class="fas fa-forward mr-2"></i>Skip Animation
             </button>
         </div>
     </div>
@@ -152,58 +244,67 @@
     <div id="authPages" class="hidden">
         <!-- Login Page -->
         <div id="loginPage" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-md w-full space-y-8 glass-effect p-8 rounded-3xl shadow-2xl bounce-in">
-                <div class="text-center">
-                    <div class="mx-auto h-20 w-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 neon-glow">
-                        <i class="fas fa-cloud text-white text-2xl"></i>
+            <div class="max-w-md w-full space-y-8 glass-effect p-10 rounded-3xl shadow-2xl bounce-in relative overflow-hidden">
+                <!-- Background Pattern -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500 rounded-full opacity-20 blur-xl"></div>
+                <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500 rounded-full opacity-20 blur-xl"></div>
+                
+                <div class="text-center relative z-10">
+                    <div class="mx-auto h-24 w-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 neon-glow">
+                        <i class="fas fa-sign-in-alt text-white text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-900">
+                    <h2 class="text-4xl font-bold text-white">
                         Welcome Back
                     </h2>
-                    <p class="mt-2 text-gray-600">Sign in to your account</p>
+                    <p class="mt-3 text-blue-200">Sign in to access your files</p>
                 </div>
-                <form class="mt-8 space-y-6" id="loginForm">
-                    <div class="space-y-4">
-                        <div>
+                <form class="mt-10 space-y-6 relative z-10" id="loginForm">
+                    <div class="space-y-5">
+                        <div class="relative">
                             <input id="loginEmail" name="email" type="email" required 
-                                class="relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 transform focus:scale-105"
+                                class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm"
                                 placeholder="Email address">
+                            <i class="fas fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-300"></i>
                         </div>
-                        <div>
+                        <div class="relative">
                             <input id="loginPassword" name="password" type="password" required 
-                                class="relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 transform focus:scale-105"
+                                class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm pr-12"
                                 placeholder="Password">
+                            <i class="fas fa-lock absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-300"></i>
+                            <button type="button" class="password-toggle absolute right-10 top-1/2 transform -translate-y-1/2 text-blue-300">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <input id="remember-me" name="remember-me" type="checkbox" 
-                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                                class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-white/30 rounded bg-white/10">
+                            <label for="remember-me" class="ml-3 block text-sm text-blue-200">
                                 Remember me
                             </label>
                         </div>
 
                         <div class="text-sm">
-                            <a href="#" class="font-medium text-blue-600 hover:text-blue-500 forgot-password-btn transition-colors duration-300">
+                            <a href="#" class="font-medium text-blue-300 hover:text-blue-200 forgot-password-btn transition-all duration-300 transform hover:scale-105">
                                 Forgot password?
                             </a>
                         </div>
                     </div>
 
                     <div>
-                        <button type="submit" class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-2xl text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all duration-300 shadow-lg">
-                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <button type="submit" class="group relative w-full flex justify-center py-5 px-4 border border-transparent text-lg font-medium rounded-2xl text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-500/50 transform hover:scale-105 transition-all duration-500 shadow-2xl neon-glow">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-4">
                                 <i class="fas fa-sign-in-alt"></i>
                             </span>
-                            Sign in
+                            Sign in to CloudDrive
                         </button>
                     </div>
 
                     <div class="text-center">
-                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500 signup-link transition-colors duration-300">
-                            Don't have an account? Sign up
+                        <a href="#" class="font-medium text-blue-300 hover:text-blue-200 signup-link transition-all duration-300 transform hover:scale-105">
+                            New to CloudDrive? Create account
                         </a>
                     </div>
                 </form>
@@ -212,50 +313,80 @@
 
         <!-- Signup Page -->
         <div id="signupPage" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hidden">
-            <div class="max-w-md w-full space-y-8 glass-effect p-8 rounded-3xl shadow-2xl bounce-in">
-                <div class="text-center">
-                    <div class="mx-auto h-20 w-20 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center mb-4 neon-glow">
-                        <i class="fas fa-user-plus text-white text-2xl"></i>
+            <div class="max-w-md w-full space-y-8 glass-effect p-10 rounded-3xl shadow-2xl bounce-in relative overflow-hidden">
+                <!-- Background Pattern -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-green-500 rounded-full opacity-20 blur-xl"></div>
+                <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500 rounded-full opacity-20 blur-xl"></div>
+                
+                <div class="text-center relative z-10">
+                    <div class="mx-auto h-24 w-24 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 neon-glow">
+                        <i class="fas fa-user-plus text-white text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-900">
-                        Create Account
+                    <h2 class="text-4xl font-bold text-white">
+                        Join CloudDrive
                     </h2>
-                    <p class="mt-2 text-gray-600">Join CloudDrive today</p>
+                    <p class="mt-3 text-blue-200">Create your secure cloud storage</p>
                 </div>
-                <form class="mt-8 space-y-6" id="signupForm">
-                    <div class="space-y-4">
-                        <div>
+                <form class="mt-10 space-y-6 relative z-10" id="signupForm">
+                    <div class="space-y-5">
+                        <div class="relative">
                             <input id="signupEmail" name="email" type="email" required 
-                                class="relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 transform focus:scale-105"
+                                class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm"
                                 placeholder="Email address">
+                            <i class="fas fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-green-300"></i>
                         </div>
-                        <div>
+                        <div class="relative">
+                            <input id="confirmEmail" name="confirmEmail" type="email" required 
+                                class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm"
+                                placeholder="Confirm email address">
+                            <i class="fas fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-green-300"></i>
+                            <div class="error-message hidden absolute left-0 -bottom-6 text-red-400 text-sm mt-1 animate-pulse">
+                                <i class="fas fa-exclamation-circle mr-1"></i>Emails do not match
+                            </div>
+                        </div>
+                        <div class="relative">
                             <input id="signupPassword" name="password" type="password" required 
-                                class="relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 transform focus:scale-105"
-                                placeholder="Password">
-                            <div class="password-strength mt-3">
-                                <div class="flex space-x-1 mb-2">
-                                    <div class="h-2 flex-1 bg-gray-200 rounded-full strength-segment"></div>
-                                    <div class="h-2 flex-1 bg-gray-200 rounded-full strength-segment"></div>
-                                    <div class="h-2 flex-1 bg-gray-200 rounded-full strength-segment"></div>
-                                    <div class="h-2 flex-1 bg-gray-200 rounded-full strength-segment"></div>
+                                class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm pr-12"
+                                placeholder="Create password">
+                            <i class="fas fa-lock absolute right-4 top-1/2 transform -translate-y-1/2 text-green-300"></i>
+                            <button type="button" class="password-toggle absolute right-10 top-1/2 transform -translate-y-1/2 text-green-300">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <div class="password-strength mt-4">
+                                <div class="flex space-x-2 mb-3">
+                                    <div class="h-3 flex-1 bg-gray-600 rounded-full strength-segment transition-all duration-500"></div>
+                                    <div class="h-3 flex-1 bg-gray-600 rounded-full strength-segment transition-all duration-500"></div>
+                                    <div class="h-3 flex-1 bg-gray-600 rounded-full strength-segment transition-all duration-500"></div>
+                                    <div class="h-3 flex-1 bg-gray-600 rounded-full strength-segment transition-all duration-500"></div>
                                 </div>
-                                <div class="strength-text text-sm text-gray-500 text-center"></div>
+                                <div class="strength-text text-sm text-center transition-all duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <input id="confirmPassword" name="confirmPassword" type="password" required 
+                                class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm pr-12"
+                                placeholder="Confirm password">
+                            <i class="fas fa-lock absolute right-4 top-1/2 transform -translate-y-1/2 text-green-300"></i>
+                            <button type="button" class="password-toggle absolute right-10 top-1/2 transform -translate-y-1/2 text-green-300">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <div class="error-message hidden absolute left-0 -bottom-6 text-red-400 text-sm mt-1 animate-pulse">
+                                <i class="fas fa-exclamation-circle mr-1"></i>Passwords do not match
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <button type="submit" class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-2xl text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transform hover:scale-105 transition-all duration-300 shadow-lg">
-                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <button type="submit" class="group relative w-full flex justify-center py-5 px-4 border border-transparent text-lg font-medium rounded-2xl text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-green-500/50 transform hover:scale-105 transition-all duration-500 shadow-2xl neon-glow">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-4">
                                 <i class="fas fa-user-plus"></i>
                             </span>
-                            Create Account
+                            Create CloudDrive Account
                         </button>
                     </div>
 
                     <div class="text-center">
-                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500 login-link transition-colors duration-300">
+                        <a href="#" class="font-medium text-blue-300 hover:text-blue-200 login-link transition-all duration-300 transform hover:scale-105">
                             Already have an account? Sign in
                         </a>
                     </div>
@@ -265,26 +396,31 @@
 
         <!-- Forgot Password Page -->
         <div id="forgotPasswordPage" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hidden">
-            <div class="max-w-md w-full space-y-8 glass-effect p-8 rounded-3xl shadow-2xl bounce-in">
-                <div class="text-center">
-                    <div class="mx-auto h-20 w-20 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mb-4 neon-glow">
-                        <i class="fas fa-key text-white text-2xl"></i>
+            <div class="max-w-md w-full space-y-8 glass-effect p-10 rounded-3xl shadow-2xl bounce-in relative overflow-hidden">
+                <!-- Background Pattern -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-orange-500 rounded-full opacity-20 blur-xl"></div>
+                <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-red-500 rounded-full opacity-20 blur-xl"></div>
+                
+                <div class="text-center relative z-10">
+                    <div class="mx-auto h-24 w-24 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 neon-glow">
+                        <i class="fas fa-key text-white text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-900">
+                    <h2 class="text-4xl font-bold text-white">
                         Reset Password
                     </h2>
-                    <p class="mt-2 text-gray-600">We'll send you a new password</p>
+                    <p class="mt-3 text-blue-200">We'll send a new password to your email</p>
                 </div>
-                <form class="mt-8 space-y-6" id="forgotPasswordForm">
-                    <div>
+                <form class="mt-10 space-y-6 relative z-10" id="forgotPasswordForm">
+                    <div class="relative">
                         <input id="forgotEmail" name="email" type="email" required 
-                            class="relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 transform focus:scale-105"
-                            placeholder="Email address">
+                            class="relative block w-full px-5 py-5 bg-white/10 border border-white/20 placeholder-blue-200 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/50 focus:border-transparent transition-all duration-500 transform focus:scale-105 backdrop-blur-sm"
+                            placeholder="Enter your email">
+                        <i class="fas fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-300"></i>
                     </div>
 
                     <div>
-                        <button type="submit" class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-2xl text-white bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transform hover:scale-105 transition-all duration-300 shadow-lg">
-                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <button type="submit" class="group relative w-full flex justify-center py-5 px-4 border border-transparent text-lg font-medium rounded-2xl text-white bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-orange-500/50 transform hover:scale-105 transition-all duration-500 shadow-2xl neon-glow">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-4">
                                 <i class="fas fa-paper-plane"></i>
                             </span>
                             Send New Password
@@ -292,7 +428,7 @@
                     </div>
 
                     <div class="text-center">
-                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500 back-to-login transition-colors duration-300">
+                        <a href="#" class="font-medium text-blue-300 hover:text-blue-200 back-to-login transition-all duration-300 transform hover:scale-105">
                             Back to sign in
                         </a>
                     </div>
@@ -304,73 +440,85 @@
     <!-- Main Dashboard -->
     <div id="dashboard" class="hidden">
         <!-- Header -->
-        <header class="bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <header class="bg-white/10 backdrop-blur-lg border-b border-white/20 sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-cloud text-white"></i>
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl neon-glow">
+                                <i class="fas fa-cloud text-white text-xl"></i>
                             </div>
-                            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">CloudDrive</h1>
+                            <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">CloudDrive</h1>
                         </div>
-                        <nav class="hidden md:flex space-x-1">
-                            <a href="#" class="nav-item active" data-view="files">
-                                <i class="fas fa-file mr-2"></i>My Files
+                        <nav class="hidden lg:flex space-x-1">
+                            <a href="#" class="nav-item active px-5 py-3 rounded-2xl transition-all duration-300" data-view="files">
+                                <i class="fas fa-file mr-3"></i>My Files
                             </a>
-                            <a href="#" class="nav-item" data-view="recent">
-                                <i class="fas fa-clock mr-2"></i>Recent
+                            <a href="#" class="nav-item px-5 py-3 rounded-2xl transition-all duration-300" data-view="recent">
+                                <i class="fas fa-clock mr-3"></i>Recent
                             </a>
-                            <a href="#" class="nav-item" data-view="shared">
-                                <i class="fas fa-share-alt mr-2"></i>Shared
+                            <a href="#" class="nav-item px-5 py-3 rounded-2xl transition-all duration-300" data-view="shared">
+                                <i class="fas fa-share-alt mr-3"></i>Shared
                             </a>
                         </nav>
                     </div>
                     
                     <div class="flex items-center space-x-4">
                         <!-- Storage Indicator -->
-                        <div class="hidden md:block">
-                            <div class="storage-indicator bg-white/50 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-sm">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-database text-white text-sm"></i>
+                        <div class="hidden xl:block">
+                            <div class="storage-indicator bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 shadow-lg border border-white/10">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-database text-white"></i>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-medium text-gray-700">Storage</div>
-                                        <div class="text-xs text-gray-500"><span id="storageUsed">0 MB</span> / 15 GB</div>
+                                        <div class="text-sm font-medium text-white">Storage Used</div>
+                                        <div class="text-xs text-blue-200"><span id="storageUsed">0 MB</span> / 15 GB</div>
                                     </div>
                                 </div>
-                                <div class="storage-bar mt-2 w-full bg-gray-200 rounded-full h-2">
-                                    <div class="storage-progress h-2 rounded-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-500" id="storageProgress"></div>
+                                <div class="storage-bar mt-3 w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                                    <div class="storage-progress h-3 rounded-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-1000 ease-out" id="storageProgress"></div>
+                                </div>
+                                <div id="storageWarning" class="hidden storage-warning mt-2 text-xs text-red-400">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>Low storage space
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Upload Button -->
-                        <button class="upload-btn bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-2xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload</span>
-                        </button>
+                        <!-- Action Buttons -->
+                        <div class="flex space-x-3">
+                            <button class="create-folder-btn bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-medium shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2 neon-glow">
+                                <i class="fas fa-folder-plus"></i>
+                                <span class="hidden sm:block">New Folder</span>
+                            </button>
+                            <button class="upload-btn bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-2xl font-medium shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2 neon-glow">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span class="hidden sm:block">Upload</span>
+                            </button>
+                        </div>
                         
                         <!-- User Menu -->
                         <div class="relative user-menu">
-                            <button class="user-avatar w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
+                            <button class="user-avatar w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-medium shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 neon-glow">
                                 <i class="fas fa-user"></i>
                             </button>
-                            <div class="user-dropdown hidden absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-200 py-1 z-50 animate-slideIn">
-                                <div class="px-4 py-3 border-b border-gray-100">
-                                    <div class="text-sm font-medium text-gray-900" id="userEmail">user@example.com</div>
-                                    <div class="text-xs text-gray-500">Free Plan - 15 GB</div>
+                            <div class="user-dropdown hidden absolute right-0 mt-3 w-64 bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 py-2 z-50 slide-in-up">
+                                <div class="px-5 py-4 border-b border-white/10">
+                                    <div class="text-lg font-medium text-white" id="userEmail">user@example.com</div>
+                                    <div class="text-sm text-blue-200">Free Plan - 15 GB</div>
                                 </div>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-cog mr-3"></i>Settings
+                                <a href="#" class="dropdown-item group">
+                                    <i class="fas fa-cog mr-4 text-blue-300 group-hover:text-blue-200"></i>
+                                    <span>Settings</span>
                                 </a>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-shield-alt mr-3"></i>Admin
+                                <a href="#" class="dropdown-item group" id="adminLink" style="display: none;">
+                                    <i class="fas fa-shield-alt mr-4 text-green-300 group-hover:text-green-200"></i>
+                                    <span>Admin Dashboard</span>
                                 </a>
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <a href="#" class="dropdown-item text-red-600 logout-btn">
-                                    <i class="fas fa-sign-out-alt mr-3"></i>Sign out
+                                <div class="border-t border-white/10 my-2"></div>
+                                <a href="#" class="dropdown-item group text-red-300 hover:text-red-200 logout-btn">
+                                    <i class="fas fa-sign-out-alt mr-4"></i>
+                                    <span>Sign out</span>
                                 </a>
                             </div>
                         </div>
@@ -383,132 +531,186 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600">
+                <div class="stat-card bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30">
                     <div class="text-white">
-                        <div class="text-2xl font-bold">128</div>
-                        <div class="text-blue-100">Total Files</div>
+                        <div class="text-3xl font-bold" id="totalFiles">0</div>
+                        <div class="text-blue-200">Total Files</div>
                     </div>
-                    <i class="fas fa-file text-white/20 text-4xl"></i>
+                    <i class="fas fa-file text-blue-500/30 text-5xl"></i>
                 </div>
-                <div class="stat-card bg-gradient-to-br from-green-500 to-green-600">
+                <div class="stat-card bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30">
                     <div class="text-white">
-                        <div class="text-2xl font-bold">2.4</div>
-                        <div class="text-green-100">GB Used</div>
+                        <div class="text-3xl font-bold" id="storageUsedStat">0 GB</div>
+                        <div class="text-green-200">Storage Used</div>
                     </div>
-                    <i class="fas fa-database text-white/20 text-4xl"></i>
+                    <i class="fas fa-database text-green-500/30 text-5xl"></i>
                 </div>
-                <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600">
+                <div class="stat-card bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30">
                     <div class="text-white">
-                        <div class="text-2xl font-bold">12</div>
-                        <div class="text-purple-100">Shared Files</div>
+                        <div class="text-3xl font-bold" id="sharedFiles">0</div>
+                        <div class="text-purple-200">Shared Files</div>
                     </div>
-                    <i class="fas fa-share-alt text-white/20 text-4xl"></i>
+                    <i class="fas fa-share-alt text-purple-500/30 text-5xl"></i>
                 </div>
-                <div class="stat-card bg-gradient-to-br from-orange-500 to-orange-600">
+                <div class="stat-card bg-gradient-to-br from-orange-500/20 to-orange-600/20 border border-orange-500/30">
                     <div class="text-white">
-                        <div class="text-2xl font-bold">7</div>
-                        <div class="text-orange-100">Folders</div>
+                        <div class="text-3xl font-bold" id="totalFolders">0</div>
+                        <div class="text-orange-200">Folders</div>
                     </div>
-                    <i class="fas fa-folder text-white/20 text-4xl"></i>
+                    <i class="fas fa-folder text-orange-500/30 text-5xl"></i>
+                </div>
+            </div>
+
+            <!-- Storage Chart -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-3xl border border-white/20 p-6 mb-8">
+                <h3 class="text-xl font-semibold text-white mb-4">Storage Overview</h3>
+                <div class="h-64">
+                    <canvas id="storageChart"></canvas>
                 </div>
             </div>
 
             <!-- Upload Area -->
-            <div class="upload-area bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-dashed border-gray-300 p-8 text-center mb-8 transition-all duration-300 hover:border-blue-400">
-                <div class="max-w-md mx-auto">
-                    <div class="w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-cloud-upload-alt text-3xl text-blue-500"></i>
+            <div class="upload-area bg-white/10 backdrop-blur-sm rounded-3xl border-2 border-dashed border-white/30 p-12 text-center mb-8 transition-all duration-500 hover:border-blue-400/50">
+                <div class="max-w-2xl mx-auto">
+                    <div class="w-24 h-24 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/20">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-blue-300"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Drag & Drop Files</h3>
-                    <p class="text-gray-600 mb-4">or click to browse your device</p>
-                    <button class="browse-btn bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-2xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                        <i class="fas fa-folder-open mr-2"></i>Browse Files
+                    <h3 class="text-2xl font-semibold text-white mb-3">Drag & Drop Files Here</h3>
+                    <p class="text-blue-200 mb-6 text-lg">or click the button below to browse your device</p>
+                    <button class="browse-btn bg-gradient-to-r from-blue-500 to-purple-600 text-white px-10 py-4 rounded-2xl font-medium shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 text-lg">
+                        <i class="fas fa-folder-open mr-3"></i>Browse Files
                     </button>
-                    <p class="text-sm text-gray-500 mt-4">Maximum file size: 1 GB • Supported: Images, Videos, Documents</p>
+                    <p class="text-sm text-blue-300 mt-6">Maximum file size: 1 GB • Supported: Images, Videos, Documents, Archives</p>
                 </div>
             </div>
 
-            <!-- Files Grid -->
-            <div class="files-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Files will be dynamically added here -->
-                <div class="file-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group cursor-pointer">
-                    <div class="file-thumbnail h-40 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center relative overflow-hidden">
-                        <i class="fas fa-folder text-4xl text-yellow-500"></i>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    <div class="p-4">
-                        <div class="file-name font-medium text-gray-800 truncate">Documents</div>
-                        <div class="file-meta text-sm text-gray-500 mt-1">24 items • Folder</div>
+            <!-- Folders Section -->
+            <div class="mb-8" id="foldersSection">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-semibold text-white">Your Folders</h3>
+                    <div class="flex space-x-3" id="folderActions"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="foldersGrid">
+                    <!-- Folders will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Files Section -->
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-semibold text-white">Your Files</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <input type="text" id="searchFiles" placeholder="Search files..." 
+                                class="bg-white/10 border border-white/20 text-white placeholder-blue-200 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent backdrop-blur-sm">
+                            <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-300"></i>
+                        </div>
+                        <select id="sortFiles" class="bg-white/10 border border-white/20 text-white rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent backdrop-blur-sm">
+                            <option value="name">Sort by Name</option>
+                            <option value="date">Sort by Date</option>
+                            <option value="size">Sort by Size</option>
+                            <option value="type">Sort by Type</option>
+                        </select>
                     </div>
                 </div>
-
-                <div class="file-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group cursor-pointer">
-                    <div class="file-thumbnail h-40 bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center relative overflow-hidden">
-                        <i class="fas fa-file-image text-4xl text-green-500"></i>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    <div class="p-4">
-                        <div class="file-name font-medium text-gray-800 truncate">Vacation Photos</div>
-                        <div class="file-meta text-sm text-gray-500 mt-1">45 MB • Image</div>
-                    </div>
-                </div>
-
-                <div class="file-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group cursor-pointer">
-                    <div class="file-thumbnail h-40 bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center relative overflow-hidden">
-                        <i class="fas fa-file-video text-4xl text-purple-500"></i>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    <div class="p-4">
-                        <div class="file-name font-medium text-gray-800 truncate">Project Video</div>
-                        <div class="file-meta text-sm text-gray-500 mt-1">245 MB • Video</div>
-                    </div>
-                </div>
-
-                <div class="file-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group cursor-pointer">
-                    <div class="file-thumbnail h-40 bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center relative overflow-hidden">
-                        <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    <div class="p-4">
-                        <div class="file-name font-medium text-gray-800 truncate">Report.pdf</div>
-                        <div class="file-meta text-sm text-gray-500 mt-1">3.2 MB • PDF</div>
-                    </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="filesGrid">
+                    <!-- Files will be dynamically added here -->
                 </div>
             </div>
         </main>
     </div>
 
     <!-- Toast Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    <div id="toastContainer" class="fixed top-6 right-6 z-50 space-y-4"></div>
 
     <!-- Hidden File Input -->
     <input type="file" id="fileInput" multiple class="hidden">
 
+    <!-- Create Folder Modal -->
+    <div id="createFolderModal" class="modal-overlay hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="modal-content bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl max-w-md w-full p-8 slide-in-up">
+            <h3 class="text-2xl font-bold text-white mb-6 text-center">Create New Folder</h3>
+            <input type="text" id="folderNameInput" class="w-full px-5 py-4 bg-white/10 border border-white/20 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-transparent backdrop-blur-sm mb-6" placeholder="Enter folder name">
+            <div class="flex justify-end space-x-4">
+                <button class="cancel-folder-btn px-6 py-3 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-all duration-300">Cancel</button>
+                <button class="confirm-folder-btn px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300">Create Folder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div id="filePreviewModal" class="modal-overlay hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="modal-content bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden slide-in-up">
+            <div class="flex justify-between items-center p-6 border-b border-white/10">
+                <h3 class="text-2xl font-bold text-white" id="previewFileName">File Preview</h3>
+                <button class="close-preview-btn text-white hover:text-blue-300 transition-colors duration-300 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 max-h-[60vh] overflow-auto">
+                <div id="previewContent" class="text-center">
+                    <!-- Preview content will be inserted here -->
+                </div>
+            </div>
+            <div class="flex justify-end p-6 border-t border-white/10 space-x-4">
+                <button class="download-preview-btn px-6 py-3 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-all duration-300 flex items-center space-x-2">
+                    <i class="fas fa-download"></i>
+                    <span>Download</span>
+                </button>
+                <button class="share-preview-btn px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move File Modal -->
+    <div id="moveFileModal" class="modal-overlay hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="modal-content bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl max-w-md w-full p-8 slide-in-up">
+            <h3 class="text-2xl font-bold text-white mb-6 text-center">Move File</h3>
+            <p class="text-blue-200 text-center mb-6" id="moveFileText">Select destination folder</p>
+            <select id="folderSelect" class="w-full px-5 py-4 bg-white/10 border border-white/20 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-transparent backdrop-blur-sm mb-6">
+                <option value="root">Main Folder</option>
+            </select>
+            <div class="flex justify-end space-x-4">
+                <button class="cancel-move-btn px-6 py-3 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-all duration-300">Cancel</button>
+                <button class="confirm-move-btn px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300">Move File</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyB9-TI2aoFRr8yVImTdG7yVhW7YNbvDTCA",
-            authDomain: "cloud-storage-project-304c0.firebaseapp.com",
-            projectId: "cloud-storage-project-304c0",
-            storageBucket: "cloud-storage-project-304c0.firebasestorage.app",
-            messagingSenderId: "373757369777",
-            appId: "1:373757369777:web:cbd0a126beabd5e0993190",
-            measurementId: "G-LWRDDTQZNN"
-        };
-
-        // Mock Backend API
-        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://your-render-app.onrender.com';
-
+        // Cloud Storage App Frontend
         class CloudStorageApp {
             constructor() {
                 this.currentUser = null;
+                this.files = [];
+                this.folders = [];
+                this.currentFolder = 'root';
+                this.selectedFile = null;
+                this.API_BASE = window.location.origin;
                 this.init();
             }
 
             async init() {
+                this.createParticles();
                 this.setupEventListeners();
                 this.initializeBootScreen();
                 await this.checkAuthState();
+            }
+
+            createParticles() {
+                const container = document.getElementById('particlesContainer');
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + 'vw';
+                    particle.style.top = Math.random() * 100 + 'vh';
+                    particle.style.animationDelay = Math.random() * 8 + 's';
+                    particle.style.opacity = Math.random() * 0.7 + 0.3;
+                    container.appendChild(particle);
+                }
             }
 
             setupEventListeners() {
@@ -541,15 +743,40 @@
                 // File operations
                 document.querySelector('.upload-btn').addEventListener('click', () => this.openFilePicker());
                 document.querySelector('.browse-btn').addEventListener('click', () => this.openFilePicker());
+                document.querySelector('.create-folder-btn').addEventListener('click', () => this.showCreateFolderModal());
                 document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileSelect(e));
 
                 // User menu
                 document.querySelector('.user-avatar').addEventListener('click', () => this.toggleUserMenu());
                 document.querySelector('.logout-btn').addEventListener('click', (e) => this.handleLogout(e));
 
-                // Password strength
+                // Password toggles
+                document.querySelectorAll('.password-toggle').forEach(toggle => {
+                    toggle.addEventListener('click', (e) => {
+                        const input = e.target.closest('.relative').querySelector('input');
+                        const icon = e.target.querySelector('i') || e.target;
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            icon.className = 'fas fa-eye-slash';
+                        } else {
+                            input.type = 'password';
+                            icon.className = 'fas fa-eye';
+                        }
+                    });
+                });
+
+                // Email validation
+                document.getElementById('confirmEmail').addEventListener('input', () => {
+                    this.validateEmailMatch();
+                });
+
+                // Password validation
                 document.getElementById('signupPassword').addEventListener('input', (e) => {
                     this.updatePasswordStrength(e.target.value);
+                });
+
+                document.getElementById('confirmPassword').addEventListener('input', () => {
+                    this.validatePasswordMatch();
                 });
 
                 // Drag and drop
@@ -567,6 +794,27 @@
                     e.preventDefault();
                     uploadArea.classList.remove('drag-over');
                     this.handleFileSelect({ target: { files: e.dataTransfer.files } });
+                });
+
+                // Modals
+                document.querySelector('.cancel-folder-btn').addEventListener('click', () => this.hideCreateFolderModal());
+                document.querySelector('.confirm-folder-btn').addEventListener('click', () => this.createFolder());
+                document.querySelector('.close-preview-btn').addEventListener('click', () => this.hideFilePreview());
+                document.querySelector('.download-preview-btn').addEventListener('click', () => this.downloadCurrentFile());
+                document.querySelector('.share-preview-btn').addEventListener('click', () => this.shareCurrentFile());
+                document.querySelector('.cancel-move-btn').addEventListener('click', () => this.hideMoveFileModal());
+                document.querySelector('.confirm-move-btn').addEventListener('click', () => this.moveCurrentFile());
+
+                // Search and sort
+                document.getElementById('searchFiles').addEventListener('input', (e) => this.handleSearch(e.target.value));
+                document.getElementById('sortFiles').addEventListener('change', (e) => this.handleSort(e.target.value));
+
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleNavigation(e.currentTarget.dataset.view);
+                    });
                 });
 
                 // Click outside to close user menu
@@ -593,7 +841,7 @@
                 setTimeout(() => {
                     bootScreen.style.display = 'none';
                     this.showAuthPages();
-                }, 5000);
+                }, 8000);
             }
 
             showAuthPages() {
@@ -619,37 +867,103 @@
                 document.getElementById('forgotPasswordPage').classList.remove('hidden');
             }
 
+            validateEmailMatch() {
+                const email = document.getElementById('signupEmail').value;
+                const confirmEmail = document.getElementById('confirmEmail').value;
+                const errorElement = document.getElementById('confirmEmail').nextElementSibling;
+                
+                if (email !== confirmEmail && confirmEmail !== '') {
+                    errorElement.classList.remove('hidden');
+                    document.getElementById('confirmEmail').classList.add('border-red-400');
+                } else {
+                    errorElement.classList.add('hidden');
+                    document.getElementById('confirmEmail').classList.remove('border-red-400');
+                }
+            }
+
+            validatePasswordMatch() {
+                const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const errorElement = document.getElementById('confirmPassword').nextElementSibling;
+                
+                if (password !== confirmPassword && confirmPassword !== '') {
+                    errorElement.classList.remove('hidden');
+                    document.getElementById('confirmPassword').classList.add('border-red-400');
+                } else {
+                    errorElement.classList.add('hidden');
+                    document.getElementById('confirmPassword').classList.remove('border-red-400');
+                }
+            }
+
             updatePasswordStrength(password) {
                 const segments = document.querySelectorAll('.strength-segment');
                 const text = document.querySelector('.strength-text');
                 
                 let strength = 0;
+                let message = '';
+                let color = '';
+
                 if (password.length >= 8) strength++;
                 if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
                 if (password.match(/\d/)) strength++;
                 if (password.match(/[^a-zA-Z\d]/)) strength++;
 
+                switch (strength) {
+                    case 0:
+                        message = '';
+                        color = 'bg-gray-600';
+                        break;
+                    case 1:
+                        message = 'Very Weak';
+                        color = 'bg-red-500';
+                        break;
+                    case 2:
+                        message = 'Weak';
+                        color = 'bg-orange-500';
+                        break;
+                    case 3:
+                        message = 'Good';
+                        color = 'bg-yellow-500';
+                        break;
+                    case 4:
+                        message = 'Strong';
+                        color = 'bg-green-500';
+                        break;
+                }
+
                 segments.forEach((segment, index) => {
-                    segment.className = 'h-2 flex-1 rounded-full transition-all duration-300';
-                    if (index < strength) {
-                        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
-                        segment.classList.add(colors[strength - 1]);
-                    } else {
-                        segment.classList.add('bg-gray-200');
-                    }
+                    segment.className = `h-3 flex-1 rounded-full transition-all duration-500 ${index < strength ? color : 'bg-gray-600'}`;
                 });
 
-                const messages = ['Very Weak', 'Weak', 'Good', 'Strong'];
-                text.textContent = strength > 0 ? messages[strength - 1] : '';
+                text.textContent = message;
+                text.className = `strength-text text-sm text-center transition-all duration-500 ${color.replace('bg-', 'text-')}`;
             }
 
             async handleSignup(e) {
                 e.preventDefault();
                 const email = document.getElementById('signupEmail').value;
+                const confirmEmail = document.getElementById('confirmEmail').value;
                 const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // Validate inputs
+                if (email !== confirmEmail) {
+                    this.showToast('Email addresses do not match', 'error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showToast('Passwords do not match', 'error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    this.showToast('Password must be at least 6 characters', 'error');
+                    return;
+                }
 
                 try {
-                    const response = await fetch(`${API_BASE}/api/auth/signup`, {
+                    const response = await fetch(`${this.API_BASE}/api/auth/signup`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password })
@@ -673,7 +987,7 @@
                 const password = document.getElementById('loginPassword').value;
 
                 try {
-                    const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    const response = await fetch(`${this.API_BASE}/api/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password })
@@ -683,7 +997,7 @@
                         const data = await response.json();
                         this.currentUser = data.user;
                         localStorage.setItem('token', data.token);
-                        this.showToast('Welcome back!', 'success');
+                        this.showToast('Welcome to CloudDrive!', 'success');
                         this.showDashboard();
                     } else {
                         const error = await response.json();
@@ -699,14 +1013,14 @@
                 const email = document.getElementById('forgotEmail').value;
 
                 try {
-                    const response = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+                    const response = await fetch(`${this.API_BASE}/api/auth/forgot-password`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email })
                     });
 
                     if (response.ok) {
-                        this.showToast('Password reset email sent!', 'success');
+                        this.showToast('New password has been sent to your email!', 'success');
                         this.showLoginPage();
                     } else {
                         const error = await response.json();
@@ -729,7 +1043,7 @@
                 const token = localStorage.getItem('token');
                 if (token) {
                     try {
-                        const response = await fetch(`${API_BASE}/api/auth/me`, {
+                        const response = await fetch(`${this.API_BASE}/api/auth/me`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
 
@@ -737,9 +1051,12 @@
                             const user = await response.json();
                             this.currentUser = user;
                             this.showDashboard();
+                        } else {
+                            localStorage.removeItem('token');
                         }
                     } catch (error) {
                         console.log('Not authenticated');
+                        localStorage.removeItem('token');
                     }
                 }
             }
@@ -748,6 +1065,289 @@
                 document.getElementById('authPages').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
                 document.getElementById('userEmail').textContent = this.currentUser?.email || 'user@example.com';
+                
+                // Show admin link if user is admin
+                if (this.currentUser?.isAdmin) {
+                    document.getElementById('adminLink').style.display = 'block';
+                }
+                
+                this.loadUserData();
+            }
+
+            async loadUserData() {
+                // Load user files and folders
+                await this.loadFiles();
+                await this.loadFolders();
+                await this.updateStorageInfo();
+                this.renderFiles();
+                this.renderFolders();
+                this.initializeStorageChart();
+            }
+
+            async loadFiles() {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/files`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.files = data.files || [];
+                    }
+                } catch (error) {
+                    console.error('Error loading files:', error);
+                }
+            }
+
+            async loadFolders() {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/folders`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.folders = data.folders || [];
+                    }
+                } catch (error) {
+                    console.error('Error loading folders:', error);
+                }
+            }
+
+            async updateStorageInfo() {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/storage`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Update storage display
+                        document.getElementById('storageUsed').textContent = this.formatFileSize(data.used);
+                        document.getElementById('storageUsedStat').textContent = this.formatFileSize(data.used);
+                        document.getElementById('storageProgress').style.width = data.percentage + '%';
+
+                        // Update file counts
+                        document.getElementById('totalFiles').textContent = data.fileCount;
+                        document.getElementById('totalFolders').textContent = this.folders.length;
+                        document.getElementById('sharedFiles').textContent = this.files.filter(f => f.shared).length;
+
+                        // Show warning if storage is low
+                        const warningElement = document.getElementById('storageWarning');
+                        if (data.warning === 'low') {
+                            warningElement.classList.remove('hidden');
+                        } else {
+                            warningElement.classList.add('hidden');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating storage info:', error);
+                }
+            }
+
+            initializeStorageChart() {
+                const ctx = document.getElementById('storageChart').getContext('2d');
+                const usedStorage = this.files.reduce((sum, file) => sum + (file.size || 0), 0);
+                const freeStorage = (15 * 1024 * 1024 * 1024) - usedStorage;
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Used Storage', 'Free Storage'],
+                        datasets: [{
+                            data: [usedStorage, freeStorage],
+                            backgroundColor: ['#4f46e5', '#374151'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: 'white',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => {
+                                        const value = context.raw;
+                                        return this.formatFileSize(value);
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+
+            renderFiles() {
+                const container = document.getElementById('filesGrid');
+                container.innerHTML = '';
+
+                if (this.files.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-blue-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">No files yet</h3>
+                            <p class="text-blue-200">Upload your first file to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.files.forEach(file => {
+                    const fileElement = this.createFileElement(file);
+                    container.appendChild(fileElement);
+                });
+            }
+
+            renderFolders() {
+                const container = document.getElementById('foldersGrid');
+                container.innerHTML = '';
+
+                if (this.folders.length === 0) {
+                    document.getElementById('foldersSection').classList.add('hidden');
+                    return;
+                }
+
+                document.getElementById('foldersSection').classList.remove('hidden');
+
+                this.folders.forEach(folder => {
+                    const folderElement = this.createFolderElement(folder);
+                    container.appendChild(folderElement);
+                });
+            }
+
+            createFileElement(file) {
+                const div = document.createElement('div');
+                div.className = 'file-card bg-white/10 backdrop-blur-sm rounded-3xl border border-white/20 overflow-hidden group cursor-pointer';
+                
+                const icon = this.getFileIcon(file.type);
+                const size = this.formatFileSize(file.size);
+                const date = new Date(file.uploadedAt).toLocaleDateString();
+                
+                div.innerHTML = `
+                    <div class="file-thumbnail h-48 bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center relative overflow-hidden">
+                        <div class="text-5xl ${icon.color}">${icon.html}</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button class="file-action-btn p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors duration-300 mr-2" data-action="download" data-file-id="${file.id}">
+                                <i class="fas fa-download text-sm"></i>
+                            </button>
+                            <button class="file-action-btn p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors duration-300 mr-2" data-action="share" data-file-id="${file.id}">
+                                <i class="fas fa-share-alt text-sm"></i>
+                            </button>
+                            <button class="file-action-btn p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors duration-300" data-action="delete" data-file-id="${file.id}">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="file-name font-semibold text-white truncate mb-2">${file.name}</div>
+                        <div class="file-meta text-sm text-blue-200 space-y-1">
+                            <div><i class="fas fa-database mr-2"></i>${size}</div>
+                            <div><i class="fas fa-calendar mr-2"></i>${date}</div>
+                            <div><i class="fas ${file.shared ? 'fa-share-alt text-green-400' : 'fa-lock'} mr-2"></i>${file.shared ? 'Shared' : 'Private'}</div>
+                        </div>
+                    </div>
+                `;
+
+                // Add click event for preview
+                div.addEventListener('click', (e) => {
+                    if (!e.target.closest('.file-action-btn')) {
+                        this.previewFile(file);
+                    }
+                });
+
+                // Add action button events
+                div.querySelectorAll('.file-action-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const action = btn.dataset.action;
+                        const fileId = btn.dataset.fileId;
+                        this.handleFileAction(action, fileId);
+                    });
+                });
+
+                return div;
+            }
+
+            createFolderElement(folder) {
+                const div = document.createElement('div');
+                div.className = 'file-card bg-white/10 backdrop-blur-sm rounded-3xl border border-white/20 overflow-hidden group cursor-pointer';
+                
+                const fileCount = this.files.filter(f => f.folderId === folder.id).length;
+                
+                div.innerHTML = `
+                    <div class="file-thumbnail h-48 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-folder text-5xl text-yellow-400"></i>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-4 left-4 bg-black/50 rounded-full px-3 py-1 text-white text-sm">
+                            ${fileCount} items
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="file-name font-semibold text-white truncate mb-2">${folder.name}</div>
+                        <div class="file-meta text-sm text-blue-200">
+                            <i class="fas fa-folder mr-2"></i>Folder
+                        </div>
+                    </div>
+                `;
+
+                div.addEventListener('click', () => {
+                    this.navigateToFolder(folder.id, folder.name);
+                });
+
+                return div;
+            }
+
+            getFileIcon(fileType) {
+                if (!fileType) {
+                    return { html: '<i class="fas fa-file"></i>', color: 'text-gray-400' };
+                }
+
+                if (fileType.startsWith('image/')) {
+                    return { html: '<i class="fas fa-file-image"></i>', color: 'text-green-400' };
+                }
+                if (fileType.startsWith('video/')) {
+                    return { html: '<i class="fas fa-file-video"></i>', color: 'text-purple-400' };
+                }
+                if (fileType.startsWith('audio/')) {
+                    return { html: '<i class="fas fa-file-audio"></i>', color: 'text-blue-400' };
+                }
+                if (fileType.includes('pdf')) {
+                    return { html: '<i class="fas fa-file-pdf"></i>', color: 'text-red-400' };
+                }
+                if (fileType.includes('word') || fileType.includes('document')) {
+                    return { html: '<i class="fas fa-file-word"></i>', color: 'text-blue-500' };
+                }
+                if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
+                    return { html: '<i class="fas fa-file-excel"></i>', color: 'text-green-500' };
+                }
+                if (fileType.includes('zip') || fileType.includes('compressed')) {
+                    return { html: '<i class="fas fa-file-archive"></i>', color: 'text-yellow-500' };
+                }
+
+                return { html: '<i class="fas fa-file"></i>', color: 'text-gray-400' };
+            }
+
+            formatFileSize(bytes) {
+                if (!bytes) return '0 B';
+                
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
             }
 
             openFilePicker() {
@@ -758,30 +1358,390 @@
                 const files = Array.from(event.target.files);
                 if (files.length === 0) return;
 
+                let uploadedCount = 0;
+                let errorCount = 0;
+
                 for (const file of files) {
-                    await this.uploadFile(file);
+                    try {
+                        await this.uploadFile(file);
+                        uploadedCount++;
+                    } catch (error) {
+                        errorCount++;
+                        console.error('Upload error for file:', file.name, error);
+                    }
                 }
+
+                if (uploadedCount > 0) {
+                    this.showToast(`Successfully uploaded ${uploadedCount} file(s)`, 'success');
+                }
+                if (errorCount > 0) {
+                    this.showToast(`Failed to upload ${errorCount} file(s)`, 'error');
+                }
+
+                // Refresh file list
+                await this.loadFiles();
+                await this.updateStorageInfo();
+                this.renderFiles();
             }
 
             async uploadFile(file) {
                 const formData = new FormData();
                 formData.append('file', file);
+                formData.append('folderId', this.currentFolder);
 
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${this.API_BASE}/api/files/upload`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Upload failed');
+                }
+
+                return await response.json();
+            }
+
+            async handleFileAction(action, fileId) {
+                const file = this.files.find(f => f.id === fileId);
+                if (!file) return;
+
+                switch (action) {
+                    case 'download':
+                        await this.downloadFile(file);
+                        break;
+                    case 'share':
+                        await this.shareFile(file);
+                        break;
+                    case 'delete':
+                        await this.deleteFile(file);
+                        break;
+                    case 'move':
+                        this.showMoveFileModal(file);
+                        break;
+                }
+            }
+
+            async downloadFile(file) {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch(`${API_BASE}/api/files/upload`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formData
+                    const response = await fetch(`${this.API_BASE}/api/files/download/${file.id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
 
                     if (response.ok) {
-                        this.showToast(`"${file.name}" uploaded successfully`, 'success');
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        this.showToast(`"${file.name}" downloaded`, 'success');
                     } else {
-                        this.showToast(`Failed to upload "${file.name}"`, 'error');
+                        this.showToast('Download failed', 'error');
                     }
                 } catch (error) {
-                    this.showToast('Network error during upload', 'error');
+                    this.showToast('Network error during download', 'error');
+                }
+            }
+
+            async shareFile(file) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/files/share/${file.id}`, {
+                        method: 'POST',
+                        headers: { 
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        file.shared = true;
+                        file.shareUrl = data.shareUrl;
+                        this.showToast(`"${file.name}" is now shared`, 'success');
+                        this.renderFiles();
+                    } else {
+                        this.showToast('Sharing failed', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error during sharing', 'error');
+                }
+            }
+
+            async deleteFile(file) {
+                if (!confirm(`Are you sure you want to delete "${file.name}"?`)) return;
+
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/files/${file.id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        this.files = this.files.filter(f => f.id !== file.id);
+                        this.showToast(`"${file.name}" deleted`, 'success');
+                        await this.updateStorageInfo();
+                        this.renderFiles();
+                    } else {
+                        this.showToast('Delete failed', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error during deletion', 'error');
+                }
+            }
+
+            showCreateFolderModal() {
+                document.getElementById('createFolderModal').classList.remove('hidden');
+                document.getElementById('folderNameInput').value = '';
+                document.getElementById('folderNameInput').focus();
+            }
+
+            hideCreateFolderModal() {
+                document.getElementById('createFolderModal').classList.add('hidden');
+            }
+
+            async createFolder() {
+                const name = document.getElementById('folderNameInput').value.trim();
+                if (!name) {
+                    this.showToast('Please enter a folder name', 'error');
+                    return;
+                }
+
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/folders`, {
+                        method: 'POST',
+                        headers: { 
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.folders.push(data.folder);
+                        this.showToast(`Folder "${name}" created`, 'success');
+                        this.hideCreateFolderModal();
+                        this.renderFolders();
+                    } else {
+                        const error = await response.json();
+                        this.showToast(error.message || 'Failed to create folder', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error', 'error');
+                }
+            }
+
+            navigateToFolder(folderId, folderName) {
+                this.currentFolder = folderId;
+                this.showToast(`Opened folder "${folderName}"`, 'info');
+                // Filter files by folder
+                this.renderFiles();
+            }
+
+            previewFile(file) {
+                this.selectedFile = file;
+                document.getElementById('previewFileName').textContent = file.name;
+                const previewContent = document.getElementById('previewContent');
+                
+                if (file.type && file.type.startsWith('image/')) {
+                    previewContent.innerHTML = `
+                        <img src="${file.url}" alt="${file.name}" class="max-w-full max-h-96 mx-auto rounded-2xl shadow-2xl">
+                        <p class="text-blue-200 mt-4">Image preview - ${this.formatFileSize(file.size)}</p>
+                    `;
+                } else if (file.type && file.type.startsWith('video/')) {
+                    previewContent.innerHTML = `
+                        <video controls class="max-w-full max-h-96 mx-auto rounded-2xl shadow-2xl">
+                            <source src="${file.url}" type="${file.type}">
+                            Your browser does not support the video tag.
+                        </video>
+                        <p class="text-blue-200 mt-4">Video preview - ${this.formatFileSize(file.size)}</p>
+                    `;
+                } else {
+                    const icon = this.getFileIcon(file.type);
+                    previewContent.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-64">
+                            <div class="text-8xl ${icon.color} mb-6">${icon.html}</div>
+                            <p class="text-xl font-semibold text-white mb-2">${file.name}</p>
+                            <p class="text-blue-200">${this.formatFileSize(file.size)} • ${file.type || 'File'}</p>
+                            <p class="text-blue-300 mt-4">Preview not available for this file type</p>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('filePreviewModal').classList.remove('hidden');
+            }
+
+            hideFilePreview() {
+                document.getElementById('filePreviewModal').classList.add('hidden');
+                this.selectedFile = null;
+            }
+
+            downloadCurrentFile() {
+                if (this.selectedFile) {
+                    this.downloadFile(this.selectedFile);
+                }
+            }
+
+            shareCurrentFile() {
+                if (this.selectedFile) {
+                    this.shareFile(this.selectedFile);
+                }
+            }
+
+            showMoveFileModal(file) {
+                this.selectedFile = file;
+                document.getElementById('moveFileText').textContent = `Move "${file.name}" to:`;
+                
+                const folderSelect = document.getElementById('folderSelect');
+                folderSelect.innerHTML = '<option value="root">Main Folder</option>';
+                
+                this.folders.forEach(folder => {
+                    const option = document.createElement('option');
+                    option.value = folder.id;
+                    option.textContent = folder.name;
+                    folderSelect.appendChild(option);
+                });
+                
+                document.getElementById('moveFileModal').classList.remove('hidden');
+            }
+
+            hideMoveFileModal() {
+                document.getElementById('moveFileModal').classList.add('hidden');
+                this.selectedFile = null;
+            }
+
+            async moveCurrentFile() {
+                if (!this.selectedFile) return;
+
+                const folderId = document.getElementById('folderSelect').value;
+
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${this.API_BASE}/api/files/${this.selectedFile.id}/move`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ folderId })
+                    });
+
+                    if (response.ok) {
+                        this.selectedFile.folderId = folderId;
+                        this.showToast(`File moved successfully`, 'success');
+                        this.hideMoveFileModal();
+                        this.renderFiles();
+                    } else {
+                        const error = await response.json();
+                        this.showToast(error.message || 'Failed to move file', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error', 'error');
+                }
+            }
+
+            handleSearch(query) {
+                // Simple search implementation
+                const filteredFiles = this.files.filter(file => 
+                    file.name.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                const container = document.getElementById('filesGrid');
+                container.innerHTML = '';
+                
+                if (filteredFiles.length === 0 && query) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-search text-6xl text-blue-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">No files found</h3>
+                            <p class="text-blue-200">No files match your search: "${query}"</p>
+                        </div>
+                    `;
+                } else if (filteredFiles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-blue-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">No files yet</h3>
+                            <p class="text-blue-200">Upload your first file to get started</p>
+                        </div>
+                    `;
+                } else {
+                    filteredFiles.forEach(file => {
+                        const fileElement = this.createFileElement(file);
+                        container.appendChild(fileElement);
+                    });
+                }
+            }
+
+            handleSort(criteria) {
+                // Sort files based on criteria
+                switch (criteria) {
+                    case 'name':
+                        this.files.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                    case 'date':
+                        this.files.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+                        break;
+                    case 'size':
+                        this.files.sort((a, b) => (b.size || 0) - (a.size || 0));
+                        break;
+                    case 'type':
+                        this.files.sort((a, b) => (a.type || '').localeCompare(b.type || ''));
+                        break;
+                }
+                this.renderFiles();
+            }
+
+            handleNavigation(view) {
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active', 'bg-white/20');
+                });
+                event.currentTarget.classList.add('active', 'bg-white/20');
+
+                // Handle navigation based on view
+                switch (view) {
+                    case 'files':
+                        // Show all files
+                        this.renderFiles();
+                        break;
+                    case 'recent':
+                        // Show recent files (last 7 days)
+                        const recentFiles = this.files.filter(file => {
+                            const fileDate = new Date(file.uploadedAt);
+                            const weekAgo = new Date();
+                            weekAgo.setDate(weekAgo.getDate() - 7);
+                            return fileDate > weekAgo;
+                        });
+                        
+                        const container = document.getElementById('filesGrid');
+                        container.innerHTML = '';
+                        recentFiles.forEach(file => {
+                            const fileElement = this.createFileElement(file);
+                            container.appendChild(fileElement);
+                        });
+                        break;
+                    case 'shared':
+                        // Show shared files
+                        const sharedFiles = this.files.filter(f => f.shared);
+                        
+                        const sharedContainer = document.getElementById('filesGrid');
+                        sharedContainer.innerHTML = '';
+                        sharedFiles.forEach(file => {
+                            const fileElement = this.createFileElement(file);
+                            sharedContainer.appendChild(fileElement);
+                        });
+                        break;
                 }
             }
 
@@ -791,26 +1751,26 @@
 
             showToast(message, type = 'info') {
                 const toast = document.createElement('div');
-                toast.className = `toast ${type} bg-white rounded-2xl shadow-lg border-l-4 p-4 max-w-sm animate-slideIn transform transition-all duration-300 ${
-                    type === 'success' ? 'border-green-500' :
-                    type === 'error' ? 'border-red-500' :
-                    type === 'warning' ? 'border-yellow-500' : 'border-blue-500'
+                toast.className = `toast ${type} bg-white/20 backdrop-blur-lg border border-white/30 rounded-2xl shadow-2xl p-4 max-w-sm w-full slide-in-up transform transition-all duration-500 ${
+                    type === 'success' ? 'border-green-400/50' :
+                    type === 'error' ? 'border-red-400/50' :
+                    type === 'warning' ? 'border-yellow-400/50' : 'border-blue-400/50'
                 }`;
 
                 const icons = {
-                    success: 'fa-check-circle text-green-500',
-                    error: 'fa-exclamation-circle text-red-500',
-                    warning: 'fa-exclamation-triangle text-yellow-500',
-                    info: 'fa-info-circle text-blue-500'
+                    success: 'fa-check-circle text-green-400',
+                    error: 'fa-exclamation-circle text-red-400',
+                    warning: 'fa-exclamation-triangle text-yellow-400',
+                    info: 'fa-info-circle text-blue-400'
                 };
 
                 toast.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <i class="fas ${icons[type]} text-lg"></i>
+                    <div class="flex items-center space-x-4">
+                        <i class="fas ${icons[type]} text-xl"></i>
                         <div class="flex-1">
-                            <div class="text-sm font-medium text-gray-900">${message}</div>
+                            <div class="text-sm font-medium text-white">${message}</div>
                         </div>
-                        <button class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                        <button class="text-white/70 hover:text-white transition-colors duration-300 text-lg">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -822,20 +1782,20 @@
                 // Auto remove after 5 seconds
                 setTimeout(() => {
                     toast.classList.add('opacity-0', 'transform', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
+                    setTimeout(() => toast.remove(), 500);
                 }, 5000);
 
                 // Manual close
                 toast.querySelector('button').addEventListener('click', () => {
                     toast.classList.add('opacity-0', 'transform', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
+                    setTimeout(() => toast.remove(), 500);
                 });
             }
         }
 
-        // Initialize app
+        // Initialize app when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new CloudStorageApp();
+            window.cloudStorageApp = new CloudStorageApp();
         });
     </script>
 </body>
