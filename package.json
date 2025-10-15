@@ -1,7 +1,7 @@
 {
   "name": "cloud-storage-app",
   "version": "1.0.0",
-  "description": "Advanced Cloud Storage Application",
+  "description": "Advanced Cloud Storage Application with Firebase",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -19,7 +19,16 @@
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["cloud-storage", "file-sharing", "firebase"],
+  "keywords": [
+    "cloud-storage",
+    "file-sharing",
+    "firebase",
+    "express",
+    "javascript"
+  ],
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
