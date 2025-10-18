@@ -1,34 +1,11 @@
 {
-  "name": "cloud-storage-app",
+  "name": "cloud-storage-functions",
   "version": "1.0.0",
-  "description": "Advanced Cloud Storage Application with Firebase",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
+  "description": "Cloud Functions for Cloud Storage App",
+  "main": "index.js",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "multer": "^1.4.4",
     "firebase-admin": "^11.8.0",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.1",
+    "firebase-functions": "^4.3.1",
     "nodemailer": "^6.9.4"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
-  "keywords": [
-    "cloud-storage",
-    "file-sharing",
-    "firebase",
-    "express",
-    "javascript"
-  ],
-  "author": "Your Name",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
   }
 }
