@@ -7,8 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
     <style>
-        /* Advanced Animations */
+        /* All your existing CSS styles remain the same */
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             25% { transform: translateY(-15px) rotate(3deg); }
@@ -70,7 +77,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Custom Styles */
         .glass-effect {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
@@ -159,7 +165,6 @@
             animation: pulse 2s infinite;
         }
 
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -178,7 +183,6 @@
             background: linear-gradient(180deg, #6366f1, #8b5cf6);
         }
 
-        /* Loading dots */
         .loading-dots {
             display: inline-flex;
         }
@@ -681,6 +685,22 @@
     </div>
 
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB9-TI2aoFRr8yVImTdG7yVhW7YNbvDTCA",
+            authDomain: "cloud-storage-project-304c0.firebaseapp.com",
+            projectId: "cloud-storage-project-304c0",
+            storageBucket: "cloud-storage-project-304c0.appspot.com",
+            messagingSenderId: "373757369777",
+            appId: "1:373757369777:web:your-app-id-here" // You'll need to get this from Firebase Console
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
         // Cloud Storage App Frontend
         class CloudStorageApp {
             constructor() {
@@ -689,7 +709,7 @@
                 this.folders = [];
                 this.currentFolder = 'root';
                 this.selectedFile = null;
-                this.API_BASE = window.location.origin;
+                this.uploadTasks = new Map();
                 this.init();
             }
 
@@ -963,21 +983,23 @@
                 }
 
                 try {
-                    const response = await fetch(`${this.API_BASE}/api/auth/signup`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    this.currentUser = userCredential.user;
+                    
+                    // Create user document in Firestore
+                    await db.collection('users').doc(this.currentUser.uid).set({
+                        email: email,
+                        displayName: email.split('@')[0],
+                        usedBytes: 0,
+                        quotaBytes: 15 * 1024 * 1024 * 1024, // 15 GB
+                        isAdmin: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    if (response.ok) {
-                        this.showToast('Account created successfully!', 'success');
-                        this.showLoginPage();
-                    } else {
-                        const error = await response.json();
-                        this.showToast(error.message || 'Signup failed', 'error');
-                    }
+                    this.showToast('Account created successfully!', 'success');
+                    this.showDashboard();
                 } catch (error) {
-                    this.showToast('Network error. Please try again.', 'error');
+                    this.showToast(this.getAuthErrorMessage(error), 'error');
                 }
             }
 
@@ -987,24 +1009,12 @@
                 const password = document.getElementById('loginPassword').value;
 
                 try {
-                    const response = await fetch(`${this.API_BASE}/api/auth/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.currentUser = data.user;
-                        localStorage.setItem('token', data.token);
-                        this.showToast('Welcome to CloudDrive!', 'success');
-                        this.showDashboard();
-                    } else {
-                        const error = await response.json();
-                        this.showToast(error.message || 'Login failed', 'error');
-                    }
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    this.currentUser = userCredential.user;
+                    this.showToast('Welcome to CloudDrive!', 'success');
+                    this.showDashboard();
                 } catch (error) {
-                    this.showToast('Network error. Please try again.', 'error');
+                    this.showToast(this.getAuthErrorMessage(error), 'error');
                 }
             }
 
@@ -1013,69 +1023,71 @@
                 const email = document.getElementById('forgotEmail').value;
 
                 try {
-                    const response = await fetch(`${this.API_BASE}/api/auth/forgot-password`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email })
-                    });
-
-                    if (response.ok) {
-                        this.showToast('New password has been sent to your email!', 'success');
-                        this.showLoginPage();
-                    } else {
-                        const error = await response.json();
-                        this.showToast(error.message || 'Failed to send reset email', 'error');
-                    }
+                    await auth.sendPasswordResetEmail(email);
+                    this.showToast('Password reset email sent! Check your inbox.', 'success');
+                    this.showLoginPage();
                 } catch (error) {
-                    this.showToast('Network error. Please try again.', 'error');
+                    this.showToast(this.getAuthErrorMessage(error), 'error');
+                }
+            }
+
+            getAuthErrorMessage(error) {
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        return 'Email already in use';
+                    case 'auth/invalid-email':
+                        return 'Invalid email address';
+                    case 'auth/weak-password':
+                        return 'Password is too weak';
+                    case 'auth/user-not-found':
+                        return 'No account found with this email';
+                    case 'auth/wrong-password':
+                        return 'Incorrect password';
+                    case 'auth/too-many-requests':
+                        return 'Too many attempts. Try again later';
+                    default:
+                        return 'Authentication failed. Please try again.';
                 }
             }
 
             async handleLogout(e) {
                 e.preventDefault();
-                localStorage.removeItem('token');
-                this.currentUser = null;
-                this.showLoginPage();
-                this.showToast('Signed out successfully', 'success');
+                try {
+                    await auth.signOut();
+                    this.currentUser = null;
+                    this.showLoginPage();
+                    this.showToast('Signed out successfully', 'success');
+                } catch (error) {
+                    this.showToast('Error signing out', 'error');
+                }
             }
 
             async checkAuthState() {
-                const token = localStorage.getItem('token');
-                if (token) {
-                    try {
-                        const response = await fetch(`${this.API_BASE}/api/auth/me`, {
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-
-                        if (response.ok) {
-                            const user = await response.json();
-                            this.currentUser = user;
-                            this.showDashboard();
-                        } else {
-                            localStorage.removeItem('token');
-                        }
-                    } catch (error) {
-                        console.log('Not authenticated');
-                        localStorage.removeItem('token');
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        await this.showDashboard();
+                    } else {
+                        this.showAuthPages();
                     }
-                }
+                });
             }
 
-            showDashboard() {
+            async showDashboard() {
                 document.getElementById('authPages').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('userEmail').textContent = this.currentUser?.email || 'user@example.com';
+                document.getElementById('userEmail').textContent = this.currentUser.email;
                 
-                // Show admin link if user is admin
-                if (this.currentUser?.isAdmin) {
+                // Check if user is admin
+                const userDoc = await db.collection('users').doc(this.currentUser.uid).get();
+                if (userDoc.exists && userDoc.data().isAdmin) {
                     document.getElementById('adminLink').style.display = 'block';
                 }
                 
-                this.loadUserData();
+                await this.loadUserData();
             }
 
             async loadUserData() {
-                // Load user files and folders
                 await this.loadFiles();
                 await this.loadFolders();
                 await this.updateStorageInfo();
@@ -1086,59 +1098,61 @@
 
             async loadFiles() {
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/files`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.files = data.files || [];
-                    }
+                    const snapshot = await db.collection('files')
+                        .where('userId', '==', this.currentUser.uid)
+                        .orderBy('createdAt', 'desc')
+                        .get();
+                    
+                    this.files = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
                 } catch (error) {
                     console.error('Error loading files:', error);
+                    this.showToast('Error loading files', 'error');
                 }
             }
 
             async loadFolders() {
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/folders`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.folders = data.folders || [];
-                    }
+                    const snapshot = await db.collection('folders')
+                        .where('userId', '==', this.currentUser.uid)
+                        .orderBy('createdAt', 'desc')
+                        .get();
+                    
+                    this.folders = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
                 } catch (error) {
                     console.error('Error loading folders:', error);
+                    this.showToast('Error loading folders', 'error');
                 }
             }
 
             async updateStorageInfo() {
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/storage`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+                    const userDoc = await db.collection('users').doc(this.currentUser.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const usedBytes = userData.usedBytes || 0;
+                        const quotaBytes = userData.quotaBytes || (15 * 1024 * 1024 * 1024);
+                        const percentage = Math.min((usedBytes / quotaBytes) * 100, 100);
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        
                         // Update storage display
-                        document.getElementById('storageUsed').textContent = this.formatFileSize(data.used);
-                        document.getElementById('storageUsedStat').textContent = this.formatFileSize(data.used);
-                        document.getElementById('storageProgress').style.width = data.percentage + '%';
+                        document.getElementById('storageUsed').textContent = this.formatFileSize(usedBytes);
+                        document.getElementById('storageUsedStat').textContent = this.formatFileSize(usedBytes);
+                        document.getElementById('storageProgress').style.width = percentage + '%';
 
                         // Update file counts
-                        document.getElementById('totalFiles').textContent = data.fileCount;
+                        document.getElementById('totalFiles').textContent = this.files.length;
                         document.getElementById('totalFolders').textContent = this.folders.length;
                         document.getElementById('sharedFiles').textContent = this.files.filter(f => f.shared).length;
 
                         // Show warning if storage is low
                         const warningElement = document.getElementById('storageWarning');
-                        if (data.warning === 'low') {
+                        const remainingBytes = quotaBytes - usedBytes;
+                        if (remainingBytes <= (0.01 * quotaBytes)) { // 1% remaining
                             warningElement.classList.remove('hidden');
                         } else {
                             warningElement.classList.add('hidden');
@@ -1159,7 +1173,7 @@
                     data: {
                         labels: ['Used Storage', 'Free Storage'],
                         datasets: [{
-                            data: [usedStorage, freeStorage],
+                            data: [usedStorage, Math.max(0, freeStorage)],
                             backgroundColor: ['#4f46e5', '#374151'],
                             borderWidth: 0
                         }]
@@ -1233,9 +1247,9 @@
                 const div = document.createElement('div');
                 div.className = 'file-card bg-white/10 backdrop-blur-sm rounded-3xl border border-white/20 overflow-hidden group cursor-pointer';
                 
-                const icon = this.getFileIcon(file.type);
-                const size = this.formatFileSize(file.size);
-                const date = new Date(file.uploadedAt).toLocaleDateString();
+                const icon = this.getFileIcon(file.mimeType);
+                const size = this.formatFileSize(file.sizeBytes);
+                const date = file.createdAt ? new Date(file.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown';
                 
                 div.innerHTML = `
                     <div class="file-thumbnail h-48 bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center relative overflow-hidden">
@@ -1358,6 +1372,28 @@
                 const files = Array.from(event.target.files);
                 if (files.length === 0) return;
 
+                // Check storage quota
+                const userDoc = await db.collection('users').doc(this.currentUser.uid).get();
+                const userData = userDoc.data();
+                const usedBytes = userData.usedBytes || 0;
+                const quotaBytes = userData.quotaBytes || (15 * 1024 * 1024 * 1024);
+                const remainingBytes = quotaBytes - usedBytes;
+
+                // Check file sizes and total size
+                let totalSize = 0;
+                for (const file of files) {
+                    if (file.size > 1024 * 1024 * 1024) { // 1 GB limit
+                        this.showToast(`File "${file.name}" exceeds 1 GB limit`, 'error');
+                        return;
+                    }
+                    totalSize += file.size;
+                }
+
+                if (totalSize > remainingBytes) {
+                    this.showToast('Not enough storage space', 'error');
+                    return;
+                }
+
                 let uploadedCount = 0;
                 let errorCount = 0;
 
@@ -1385,23 +1421,67 @@
             }
 
             async uploadFile(file) {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('folderId', this.currentFolder);
-
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${this.API_BASE}/api/files/upload`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        // Create file metadata
+                        const fileId = Date.now().toString();
+                        const filePath = `users/${this.currentUser.uid}/files/${fileId}_${file.name}`;
+                        
+                        // Upload file to Firebase Storage
+                        const uploadTask = storage.ref(filePath).put(file);
+                        
+                        // Store upload task for potential cancellation
+                        this.uploadTasks.set(fileId, uploadTask);
+                        
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                // Progress handling
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                console.log(`Upload progress: ${progress}%`);
+                            },
+                            (error) => {
+                                this.uploadTasks.delete(fileId);
+                                reject(error);
+                            },
+                            async () => {
+                                try {
+                                    // Get download URL
+                                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                    
+                                    // Create file document in Firestore
+                                    const fileData = {
+                                        id: fileId,
+                                        userId: this.currentUser.uid,
+                                        folderId: this.currentFolder,
+                                        name: file.name,
+                                        sizeBytes: file.size,
+                                        mimeType: file.type,
+                                        storagePath: filePath,
+                                        downloadURL: downloadURL,
+                                        shared: false,
+                                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                    };
+                                    
+                                    await db.collection('files').doc(fileId).set(fileData);
+                                    
+                                    // Update user storage usage
+                                    await db.collection('users').doc(this.currentUser.uid).update({
+                                        usedBytes: firebase.firestore.FieldValue.increment(file.size),
+                                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                    });
+                                    
+                                    this.uploadTasks.delete(fileId);
+                                    resolve(fileData);
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            }
+                        );
+                    } catch (error) {
+                        reject(error);
+                    }
                 });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Upload failed');
-                }
-
-                return await response.json();
             }
 
             async handleFileAction(action, fileId) {
@@ -1426,52 +1506,33 @@
 
             async downloadFile(file) {
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/files/download/${file.id}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = file.name;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                        this.showToast(`"${file.name}" downloaded`, 'success');
-                    } else {
-                        this.showToast('Download failed', 'error');
-                    }
+                    const url = file.downloadURL;
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    this.showToast(`"${file.name}" downloaded`, 'success');
                 } catch (error) {
-                    this.showToast('Network error during download', 'error');
+                    this.showToast('Download failed', 'error');
                 }
             }
 
             async shareFile(file) {
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/files/share/${file.id}`, {
-                        method: 'POST',
-                        headers: { 
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
+                    // Toggle share status
+                    const newSharedStatus = !file.shared;
+                    await db.collection('files').doc(file.id).update({
+                        shared: newSharedStatus,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        file.shared = true;
-                        file.shareUrl = data.shareUrl;
-                        this.showToast(`"${file.name}" is now shared`, 'success');
-                        this.renderFiles();
-                    } else {
-                        this.showToast('Sharing failed', 'error');
-                    }
+                    
+                    file.shared = newSharedStatus;
+                    this.showToast(`"${file.name}" is now ${newSharedStatus ? 'shared' : 'private'}`, 'success');
+                    this.renderFiles();
                 } catch (error) {
-                    this.showToast('Network error during sharing', 'error');
+                    this.showToast('Sharing failed', 'error');
                 }
             }
 
@@ -1479,22 +1540,26 @@
                 if (!confirm(`Are you sure you want to delete "${file.name}"?`)) return;
 
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/files/${file.id}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
+                    // Delete from Storage
+                    await storage.ref(file.storagePath).delete();
+                    
+                    // Delete from Firestore
+                    await db.collection('files').doc(file.id).delete();
+                    
+                    // Update user storage usage
+                    await db.collection('users').doc(this.currentUser.uid).update({
+                        usedBytes: firebase.firestore.FieldValue.increment(-file.sizeBytes),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
-                    if (response.ok) {
-                        this.files = this.files.filter(f => f.id !== file.id);
-                        this.showToast(`"${file.name}" deleted`, 'success');
-                        await this.updateStorageInfo();
-                        this.renderFiles();
-                    } else {
-                        this.showToast('Delete failed', 'error');
-                    }
+                    
+                    // Remove from local array
+                    this.files = this.files.filter(f => f.id !== file.id);
+                    
+                    this.showToast(`"${file.name}" deleted`, 'success');
+                    await this.updateStorageInfo();
+                    this.renderFiles();
                 } catch (error) {
-                    this.showToast('Network error during deletion', 'error');
+                    this.showToast('Delete failed', 'error');
                 }
             }
 
@@ -1516,28 +1581,23 @@
                 }
 
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/folders`, {
-                        method: 'POST',
-                        headers: { 
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ name })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.folders.push(data.folder);
-                        this.showToast(`Folder "${name}" created`, 'success');
-                        this.hideCreateFolderModal();
-                        this.renderFolders();
-                    } else {
-                        const error = await response.json();
-                        this.showToast(error.message || 'Failed to create folder', 'error');
-                    }
+                    const folderId = Date.now().toString();
+                    const folderData = {
+                        id: folderId,
+                        userId: this.currentUser.uid,
+                        name: name,
+                        parentFolderId: null,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    await db.collection('folders').doc(folderId).set(folderData);
+                    
+                    this.folders.push(folderData);
+                    this.showToast(`Folder "${name}" created`, 'success');
+                    this.hideCreateFolderModal();
+                    this.renderFolders();
                 } catch (error) {
-                    this.showToast('Network error', 'error');
+                    this.showToast('Failed to create folder', 'error');
                 }
             }
 
@@ -1545,7 +1605,29 @@
                 this.currentFolder = folderId;
                 this.showToast(`Opened folder "${folderName}"`, 'info');
                 // Filter files by folder
-                this.renderFiles();
+                const filteredFiles = this.files.filter(file => file.folderId === folderId);
+                this.renderFilteredFiles(filteredFiles);
+            }
+
+            renderFilteredFiles(filteredFiles) {
+                const container = document.getElementById('filesGrid');
+                container.innerHTML = '';
+
+                if (filteredFiles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-folder-open text-6xl text-blue-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">Folder is empty</h3>
+                            <p class="text-blue-200">Upload files to this folder</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                filteredFiles.forEach(file => {
+                    const fileElement = this.createFileElement(file);
+                    container.appendChild(fileElement);
+                });
             }
 
             previewFile(file) {
@@ -1553,26 +1635,26 @@
                 document.getElementById('previewFileName').textContent = file.name;
                 const previewContent = document.getElementById('previewContent');
                 
-                if (file.type && file.type.startsWith('image/')) {
+                if (file.mimeType && file.mimeType.startsWith('image/')) {
                     previewContent.innerHTML = `
-                        <img src="${file.url}" alt="${file.name}" class="max-w-full max-h-96 mx-auto rounded-2xl shadow-2xl">
-                        <p class="text-blue-200 mt-4">Image preview - ${this.formatFileSize(file.size)}</p>
+                        <img src="${file.downloadURL}" alt="${file.name}" class="max-w-full max-h-96 mx-auto rounded-2xl shadow-2xl">
+                        <p class="text-blue-200 mt-4">Image preview - ${this.formatFileSize(file.sizeBytes)}</p>
                     `;
-                } else if (file.type && file.type.startsWith('video/')) {
+                } else if (file.mimeType && file.mimeType.startsWith('video/')) {
                     previewContent.innerHTML = `
                         <video controls class="max-w-full max-h-96 mx-auto rounded-2xl shadow-2xl">
-                            <source src="${file.url}" type="${file.type}">
+                            <source src="${file.downloadURL}" type="${file.mimeType}">
                             Your browser does not support the video tag.
                         </video>
-                        <p class="text-blue-200 mt-4">Video preview - ${this.formatFileSize(file.size)}</p>
+                        <p class="text-blue-200 mt-4">Video preview - ${this.formatFileSize(file.sizeBytes)}</p>
                     `;
                 } else {
-                    const icon = this.getFileIcon(file.type);
+                    const icon = this.getFileIcon(file.mimeType);
                     previewContent.innerHTML = `
                         <div class="flex flex-col items-center justify-center h-64">
                             <div class="text-8xl ${icon.color} mb-6">${icon.html}</div>
                             <p class="text-xl font-semibold text-white mb-2">${file.name}</p>
-                            <p class="text-blue-200">${this.formatFileSize(file.size)} • ${file.type || 'File'}</p>
+                            <p class="text-blue-200">${this.formatFileSize(file.sizeBytes)} • ${file.mimeType || 'File'}</p>
                             <p class="text-blue-300 mt-4">Preview not available for this file type</p>
                         </div>
                     `;
@@ -1612,6 +1694,11 @@
                     folderSelect.appendChild(option);
                 });
                 
+                // Select current folder if any
+                if (file.folderId && file.folderId !== 'root') {
+                    folderSelect.value = file.folderId;
+                }
+                
                 document.getElementById('moveFileModal').classList.remove('hidden');
             }
 
@@ -1626,80 +1713,50 @@
                 const folderId = document.getElementById('folderSelect').value;
 
                 try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${this.API_BASE}/api/files/${this.selectedFile.id}/move`, {
-                        method: 'PUT',
-                        headers: { 
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ folderId })
+                    await db.collection('files').doc(this.selectedFile.id).update({
+                        folderId: folderId === 'root' ? null : folderId,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
-                    if (response.ok) {
-                        this.selectedFile.folderId = folderId;
-                        this.showToast(`File moved successfully`, 'success');
-                        this.hideMoveFileModal();
-                        this.renderFiles();
-                    } else {
-                        const error = await response.json();
-                        this.showToast(error.message || 'Failed to move file', 'error');
-                    }
+                    
+                    this.selectedFile.folderId = folderId === 'root' ? null : folderId;
+                    this.showToast(`File moved successfully`, 'success');
+                    this.hideMoveFileModal();
+                    this.renderFiles();
                 } catch (error) {
-                    this.showToast('Network error', 'error');
+                    this.showToast('Failed to move file', 'error');
                 }
             }
 
             handleSearch(query) {
-                // Simple search implementation
                 const filteredFiles = this.files.filter(file => 
                     file.name.toLowerCase().includes(query.toLowerCase())
                 );
-                
-                const container = document.getElementById('filesGrid');
-                container.innerHTML = '';
-                
-                if (filteredFiles.length === 0 && query) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12">
-                            <i class="fas fa-search text-6xl text-blue-300 mb-4"></i>
-                            <h3 class="text-xl font-semibold text-white mb-2">No files found</h3>
-                            <p class="text-blue-200">No files match your search: "${query}"</p>
-                        </div>
-                    `;
-                } else if (filteredFiles.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12">
-                            <i class="fas fa-cloud-upload-alt text-6xl text-blue-300 mb-4"></i>
-                            <h3 class="text-xl font-semibold text-white mb-2">No files yet</h3>
-                            <p class="text-blue-200">Upload your first file to get started</p>
-                        </div>
-                    `;
-                } else {
-                    filteredFiles.forEach(file => {
-                        const fileElement = this.createFileElement(file);
-                        container.appendChild(fileElement);
-                    });
-                }
+                this.renderFilteredFiles(filteredFiles);
             }
 
             handleSort(criteria) {
-                // Sort files based on criteria
+                let sortedFiles = [...this.files];
+                
                 switch (criteria) {
                     case 'name':
-                        this.files.sort((a, b) => a.name.localeCompare(b.name));
+                        sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
                         break;
                     case 'date':
-                        this.files.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+                        sortedFiles.sort((a, b) => {
+                            const dateA = a.createdAt ? a.createdAt.seconds : 0;
+                            const dateB = b.createdAt ? b.createdAt.seconds : 0;
+                            return dateB - dateA;
+                        });
                         break;
                     case 'size':
-                        this.files.sort((a, b) => (b.size || 0) - (a.size || 0));
+                        sortedFiles.sort((a, b) => (b.sizeBytes || 0) - (a.sizeBytes || 0));
                         break;
                     case 'type':
-                        this.files.sort((a, b) => (a.type || '').localeCompare(b.type || ''));
+                        sortedFiles.sort((a, b) => (a.mimeType || '').localeCompare(b.mimeType || ''));
                         break;
                 }
-                this.renderFiles();
+                
+                this.renderFilteredFiles(sortedFiles);
             }
 
             handleNavigation(view) {
@@ -1712,35 +1769,21 @@
                 // Handle navigation based on view
                 switch (view) {
                     case 'files':
-                        // Show all files
                         this.renderFiles();
                         break;
                     case 'recent':
-                        // Show recent files (last 7 days)
                         const recentFiles = this.files.filter(file => {
-                            const fileDate = new Date(file.uploadedAt);
+                            if (!file.createdAt) return false;
+                            const fileDate = new Date(file.createdAt.seconds * 1000);
                             const weekAgo = new Date();
                             weekAgo.setDate(weekAgo.getDate() - 7);
                             return fileDate > weekAgo;
                         });
-                        
-                        const container = document.getElementById('filesGrid');
-                        container.innerHTML = '';
-                        recentFiles.forEach(file => {
-                            const fileElement = this.createFileElement(file);
-                            container.appendChild(fileElement);
-                        });
+                        this.renderFilteredFiles(recentFiles);
                         break;
                     case 'shared':
-                        // Show shared files
                         const sharedFiles = this.files.filter(f => f.shared);
-                        
-                        const sharedContainer = document.getElementById('filesGrid');
-                        sharedContainer.innerHTML = '';
-                        sharedFiles.forEach(file => {
-                            const fileElement = this.createFileElement(file);
-                            sharedContainer.appendChild(fileElement);
-                        });
+                        this.renderFilteredFiles(sharedFiles);
                         break;
                 }
             }
